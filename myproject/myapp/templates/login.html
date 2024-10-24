@@ -1,0 +1,25 @@
+{% load static %} 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Document</title> 
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> 
+</head> 
+<body> 
+<div class="container"> 
+    <form action="" method="POST"> 
+    <h2>Login</h2> 
+    <label for="">Username</label>
+    <input type="text" placeholder="Username">  
+    <label for="">Password</label> 
+    <input type="password" placeholder="Password"> 
+    <button type="submit">Login</button> 
+    </form> 
+    <div class="form-footer"> 
+        <p>Don't have an account?<a href="{% url 'registration' %}">Sign Up</a></p> 
+    </div> 
+</div> 
+</body> 
+</html>

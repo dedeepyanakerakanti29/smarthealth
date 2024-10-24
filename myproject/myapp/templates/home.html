@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <div class="home">
+        <div class="header">
+            <div class="logo">
+                <img src="" alt="Logo">
+                <h2 class="title">SmartHealth</h2>
+            </div>
+            <div class="btnlog">
+                <a href="{% url 'login' %}">
+                    <button>Login</button>
+                </a>
+            </div>
+        </div>
+        <div class="content">
+                <h1>Smart Health and wellness Monitoring System</h1>
+           </div>
+        <div class="footer">
+            <p>&copy; 2024 SmartHealth. All Rights Reserved</p>
+        </div>
+    </div>
+</body>
+</html>

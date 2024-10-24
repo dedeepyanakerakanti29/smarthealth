@@ -1,0 +1,26 @@
+{% load static %} 
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Document</title> 
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"> 
+</head> 
+<body> 
+<div class="container"> 
+    <form action="" method="POST"> 
+    <h2>Registration</h2> 
+    <label for="username">username</label>
+    <input type="text" placeholder="Username" name="username" required> 
+    <label for="email">email</label> 
+    <input type="email" placeholder="Email" name="email" required> 
+    <label for="">password</label> 
+    <input type="password" placeholder="Password" name="password" required> 
+    <label for="cpassword">Confirm password</label> 
+    <input type="password" placeholder="password" name="cpassword" required>
+    <button type="submit">Sign Up</button> 
+    </form>  
+</div> 
+</body> 
+</html>
