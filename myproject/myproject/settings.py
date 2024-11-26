@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',  # Specify the database backend here
+        'NAME': 'smarthealth',
+        'USER': 'root',
+        'PASSWORD': 'system',
+        'HOST': 'localhost',  # or the database host
+        'PORT': '3306',       # or the database port
     }
 }
 
@@ -123,4 +127,6 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR/"myapp/static"]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
