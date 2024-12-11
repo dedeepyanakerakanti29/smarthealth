@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
     <style>
         * {
             margin: 0;
@@ -12,255 +13,142 @@
             box-sizing: border-box;
             font-family: 'Roboto', Arial, Helvetica, sans-serif;
         }
-        html, body {
-            overflow: hidden; /* Disables scrolling */
-            height: 100%; /* Ensures the page takes up full height */
-        }
-    
         body {
             background-color: #eef5f9;
+            color: #3a6351;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-    
-        .home {
+        header {
+            background-color: #3a6351;
+            color: #ffffff;
+            padding: 15px 20px;
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
-            height: 100vh;
+            align-items: center;
         }
-    
         .logo {
             display: flex;
             align-items: center;
-            padding: 10px 20px;
         }
-    
         .logo img {
-            width: 60px;
-            height: 60px;
-            margin-right: 15px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-        }
-    
-        .title {
-            color: #c5edda;
-            font-size: 26px;
-            font-weight: bold;
-        }
-    
-        .btnlog button, a {
-            padding: 10px 20px;
-            background-color: #ffffff;
-            color: #3a6351;
-            border: 2px solid #3a6351;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-    
-        .btnlog button:hover, a:hover {
-            background-color: #3a6351;
-            color: #ffffff;
-        }
-    
-        .btnlog {
-            position: absolute;
-            top: 0;
-            right: 0;
-            margin: 10px;
-            padding: 10px;
-        }
-    
-        a {
-            margin: 10px;
-            text-decoration: none;
-            color: #3a6351;
-            font-weight: bold;
-            font-size: 18px;
-        }
-    
-        .header {
-            background-color: #3a6351;
-            height: 70px;
-            display: flex;
-            align-items: center;
-        }
-    
-        .content h1 {
-            font-size: 50px;
-            text-align: center;
-            margin: 20px 0;
-            color: #3a6351;
-            font-weight: bold;
-        }
-    
-        .content h2 {
-            font-size: 24px;
-            color: #ffffff;
-            margin: 10px 0;
-        }
-        .content h4 {
-            color: #ffffff;
-        }
-    
-        .content h3 {
-            font-size: 20px;
-            margin: 5px 0;
-            color: #2f4f4f;
-        }
-    
-        .footer p {
-            color: white;
-            background-color: #2f4f4f;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
+            width: 50px;
             height: 50px;
+            margin-right: 10px;
+        }
+        .logo h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        nav a {
+            color: #ffffff;
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        main {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+        }
+        main h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .feature-card {
+            background-color: #3a6351;
+            border: 2px solid #3a6351;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            height: 350px;
+            width: 300px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .feature-card p {
+            color: #ffffff;
+            font-size: 16px;
+        }
+        footer {
+            background-color: #3a6351;
+            color: #ffffff;
+            text-align: center;
+            padding: 10px;
             font-size: 14px;
         }
-    
-        .center-content a {
-            padding: 12px 25px;
-            border-radius: 30px;
-            background-color: #3a6351;
-            color: #ffffff;
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s, background-color 0.3s;
-        }
-    
-        .center-content a:hover {
-            background-color: #285943;
-            transform: scale(1.05);
-        }
-        .card-container {
-            background-color: #3a6351;
-            border-radius: 15px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow */
-            height: 400px;
-            width: 400px;
-            padding: 20px;
-            text-align: center;
-            margin: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 95%;
-            align-items: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card {
-            background-color: #3a6351;
-            border-radius: 15px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Subtle shadow */
-            height: 300px;
-            width: 300px;
-            padding: 20px;
-            text-align: center;
-            margin: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 20%;
-            align-items: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .card-containerr {
-            background-color: #eef5f9;
-            border-radius: 15px;
-            height: 300px;
-            width: 300px;
-            padding: 20px;
-            text-align: center;
-            margin: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            flex-wrap: wrap;
-            width: 95%;
-            align-items: center;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .content p {
-            color: #eef5f9;
-        }   
-    </style>    
+    </style>
 </head>
 <body>
-    <div class="home">
-        <div class="header">
-            <div class="logo">
-                <img src="{% static 'images/logo.png' %}" alt="Logo">
-                <h2 class="title">Smart Health</h2>
-            </div>
-            <div class="btnlog">
-                {% if not request.session.is_logged_in %}
-                    <a href="{% url 'login' %}">Login</a>
-                {% else %}
-                    <a href="{% url 'dashboard' %}">Dashboard</a>
-                    <a href="{% url 'wellnesstracking' %}">Wellness Tracking</a>
-                    <a href="{% url 'healthinsights' %}">Health Insights</a>
-                    <a href="{% url 'logout' %}">Logout</a>
-
-                {% endif %}
-            </div>
+    <header>
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="Logo">
+            <h1>Smart Health</h1>
         </div>
-        <div class="content">
-            {% if not request.session.is_logged_in %}
-                <h1>Smart Health and Wellness Monitoring System</h1>
-                <div class="card-containerr">
-                    <div class="card">
-                        <h4>Health Insights</h4><br>
-                        <p>This is the feature that allows you to input the specific health parameters and know your health
-                            condition instantly and also recommend you better ways to improve your health.
-                        </p>
-                    </div>
-                    <div class="card">
-                        <h4>Wellness Tracking</h4><br>
-                        <p>This is the feature that allows you to maintain and manage the expenses that are spent on your diet, food, 
-                            fitness and other health related expenses. These help one to know how much money was spent on each and every
-                            health related aspect(food, medicines, fitness etc..,) 
-                        </p>
-                    </div>
-                    <div class="card">
-                        <h4>AI Suggestions</h4><br>
-                        <p>This is the feature that allows you to input the symptoms that you feel i.e when one needs some remedies 
-                            and suggestions, this helps in one way to cure. These are the remedies or suggestions that are generated by 
-                            AI and helps you to know many remedies regarding illness in health.
-                        </p>
-                    </div>
-                    <div class="card">
-                        <h4>Dashboard</h4><br>
-                        <p>This is the feature that allows you to store and manage the doctor's and patient's details and helps one to 
-                            book an appointment with that available doctors. This helps one to reach and view the list of doctors that are 
-                            available to them.
-                        </p>
-                    </div>
-                </div>
+        <nav>
+            {% if is_authenticated %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'wellnesstracking' %}">Wellness Tracking</a>
+                <a href="{% url 'healthinsights' %}">Health Insights</a>
+                <a href="{% url 'suggestions' %}">Suggestions</a>
+                <a href="{% url 'logout' %}">Logout</a>
             {% else %}
-                <h1>Here is the way to get quick remedies and suggestions for your health :</h1>
-                <div class="card-container">
-                    <h2>AI Suggestions here!!</h2><br>
-                    <h4>Good health is the foundation of a fulfilling life, enabling physical, mental, and emotional well-being. It involves maintaining a balanced diet, regular exercise, quality sleep, and stress management. Prioritizing preventive care and positive lifestyle choices fosters long-term vitality and resilience.
-                        AI-powered health suggestions leverage data analysis and machine learning to provide personalized recommendations for improving well-being. By analyzing factors like activity levels, diet, sleep patterns, and stress, AI can suggest tailored fitness routines, nutrition plans, and stress-relief techniques. 
-                        Additionally, AI can predict potential health risks and offer proactive solutions, empowering individuals to make informed lifestyle choices for better overall health.
-                    </h4><br>
-                    <a href="{% url 'suggestions' %}">Suggestions</a>
-                </div>                            
+                <a href="{% url 'login' %}">Login</a>
             {% endif %}
+        </nav>
+    </header>
+    <main>
+        {% if is_authenticated %}
+            <h1>Welcome Back {{ user.get_username }}!</h1>
+            <h2>Explore the features below to make the most of your health journey:</h2><br>
+        {% else %}
+            <h1>Welcome to Smart Health and Wellness Monitoring</h1>
+            <h2>Please log in to access our features and insights.</h2><br>
+        {% endif %}
+        <div class="features">
+            <div class="feature-card">
+                <h3>Health Insights</h3>
+                <img src="{% static 'images/healin.jpg' %}">
+                <p>Input health parameters to instantly check your condition and receive personalized recommendations.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Wellness Tracking</h3>
+                <img src="{% static 'images/welltrac.jpg' %}">
+                <p>Track your health-related expenses on food, fitness, and medicines with detailed analysis.</p>
+            </div>
+            <div class="feature-card">
+                <h3>AI Suggestions</h3>
+                <img src="{% static 'images/aisugg.jpg' %}">
+                <p>Get remedies and suggestions generated by AI based on your symptoms and health conditions.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Dashboard</h3>
+                <img src="{% static 'images/dashbo.jpg' %}">
+                <p>Manage doctor appointments and access patient details seamlessly in one place.</p>
+            </div>
         </div>
-        <div class="footer">
-            <p>&copy; 2024 SmartHealth. All Rights Reserved</p>
-        </div>
-    </div>
+    </main>
+    <footer>
+        &copy; 2024 SmartHealth. All Rights Reserved
+    </footer>
 </body>
 </html>

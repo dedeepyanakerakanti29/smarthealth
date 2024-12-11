@@ -4,123 +4,105 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 import re
 import requests
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.conf import settings
 from .models import Doctor, Patient, Appointment, WellnessTransaction
+import io
+import base64
+import matplotlib.pyplot as plt
+from django.http import JsonResponse
+import matplotlib
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator
+from django.contrib.auth import get_user_model
 
-@csrf_protect
+def home(request):
+    return render(request, 'home.html',{'is_authenticated': request.user.is_authenticated})
+
+User = get_user_model()
+
+def check_password_strength(password):
+    # Implement your password strength checking logic here
+    # Example: Ensure password is at least 8 characters long, contains upper/lowercase letters, etc.
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long."
+    if not any(char.isdigit() for char in password):
+        return False, "Password must contain at least one number."
+    if not any(char.islower() for char in password):
+        return False, "Password must contain at least one lowercase letter."
+    if not any(char.isupper() for char in password):
+        return False, "Password must contain at least one uppercase letter."
+    if not any(char in '!@#$%^&*()_+' for char in password):
+        return False, "Password must contain at least one special character."
+    return True, ""
 def registration(request):
     if request.method == "POST":
-        us = request.POST.get('username')
-        em = request.POST.get('email')
-        ps = request.POST.get('password')
-        cpass = request.POST.get('cpassword')
- 
-        errors = {}
- 
-        # Check if password and confirmation match
-        if ps != cpass:
-            errors['cpassword_error'] = "Passwords do not match!"
- 
-        # Password validation checks
-        if len(ps) < 6:
-            errors['password_error'] = "Password must be at least 6 characters long."
-        elif not re.search(r"[!@#$%^&*(),.?\":{}|<>]", ps):
-            errors['password_error'] = "Password must include at least one special character."
-        elif not (re.search(r"[A-Z]", ps) and re.search(r"[a-z]", ps) and re.search(r"[0-9]", ps)):
-            errors['password_error'] = "Password must include uppercase, lowercase, and numbers."
-        # If there are errors, re-render the form with error messages
-        if errors:
-            return render(request, 'registration.html', {'errors': errors})
- 
-        try:
-            # Establishing the connection
-            conn = sql.connect(
-                host="localhost",
-                user="root",
-                password="system",
-                database="smarthealth"
-            )
-            cursor = conn.cursor()
- 
-            # Parameterized query to avoid SQL injection
-            comm = "INSERT INTO registration (username, email, password, cpassword) VALUES (%s, %s, %s, %s)"
-            cursor.execute(comm, (us, em, ps, cpass))
-            conn.commit()
- 
-            messages.success(request, "Registration successful!")
-            return redirect('login')  # Redirect to the login page
- 
-        except sql.Error as e:
-            messages.error(request, f"Error: {e}")
-        finally:
-            if cursor:
-                cursor.close()
-            if conn:
-                conn.close()
- 
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        cpassword = request.POST['cpassword']
+
+        # Check if passwords match
+        if password != cpassword:
+            messages.error(request, "Passwords do not match.")
+        else:
+            # Check for existing email or username
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "An account with this email already exists.")
+            elif User.objects.filter(username=username).exists():
+                messages.error(request, "Username already taken.")
+            else:
+                # Email validation
+                try:
+                    validator = EmailValidator()
+                    validator(email)  # Will raise ValidationError if invalid
+                except ValidationError:
+                    messages.error(request, "Invalid email format. Please enter a valid email address.")
+                else:
+                    # Check password strength
+                    is_valid, error_message = check_password_strength(password)
+                    if not is_valid:
+                        messages.error(request, error_message)
+                    else:
+                        # Create user if email is valid and password is strong
+                        User.objects.create_user(username=username, email=email, password=password)
+                        messages.success(request, "Registration successful! You can now log in.")
+                        return redirect('login')  # Redirect to login page
+
     return render(request, 'registration.html')
 
 
-def home(request):
-    return render(request,'home.html')
-
 @csrf_protect
 def login(request):
-    error_message = ""
-   
     if request.method == "POST":
-        # Connect to the database
-        try:
-            conn = sql.connect(host="localhost", user="root", password="system", database="smarthealth")
-            cursor = conn.cursor()
-           
-            # Get the data from the form
-            username = request.POST.get("username")
-            password = request.POST.get("password")
-           
-            print("Login attempt with username:", username, "and password:", password)  # Debugging print statement
-           
-            # Retrieve the user data from the database
-            query = "SELECT password FROM registration WHERE username = %s"
-            cursor.execute(query, (username,))
-            result = cursor.fetchone()
-           
-            if result:
-                # If a record is found, check if the password matches
-                db_password = result[0]
-                print("Password in database:", db_password)
-                if db_password == password:
-                    request.session['is_logged_in'] = True
-                    request.session['username'] = username
-                    print("Login successful")  # Debugging print statement
-                    # Clear any unread results to avoid errors when closing
-                    cursor.fetchall()  # Ensures all results are read
-                    return redirect('home')  # Redirect to home page on successful login
-                else:
-                    error_message = "Invalid password."
-            else:
-                error_message = "Username not found."
-               
-        except sql.Error as e:
-            print("Database error:", e)
-            error_message = "Database error. Please try again later."
-        finally:
-            # Ensure all results are processed before closing
-            cursor.fetchall()  # Clears any remaining results
-            if cursor:
-                cursor.close()
-            if conn:
-                conn.close()
-   
-    # Pass the error message to the template if login fails
-    return render(request, 'login.html', {"error_message": error_message})
+        # Get username and password from the form
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+        
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            # Log the user in
+            auth_login(request, user)
+            messages.success(request, "Login successful!")
+            # Redirect to the success page
+            return redirect('home')  # Make sure to create a success URL
+        else:
+            error_message = "Invalid username or password."
+            return render(request, 'login.html', {'error_message': error_message})
 
+    return render(request, 'login.html')
 
-
-
+# Logout View
 def logout(request):
-    request.session.flush()  # Clears all session data
-    return redirect('home') 
+   
+    auth_logout(request)  # Use Django's built-in logout function
+    messages.success(request, "Logged out successfully.")
+    return redirect('home')
+
+
+
 
 
  
@@ -211,7 +193,7 @@ def health_suggestions(request):
             short_points = points[:10]  # Limit to 5-10 points
 
             # Format the suggestions into bullet points
-            bullet_points = [f"• {point}" for point in short_points]
+            bullet_points = [f"{point}" for point in short_points]
 
             return JsonResponse({"suggestions": bullet_points})
 
@@ -219,16 +201,15 @@ def health_suggestions(request):
             return JsonResponse({"error": str(e)})
     
     return render(request, "suggestions.html")
-import io
-import base64
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('Agg') 
+
+ 
 
 import io
 import base64
 import matplotlib.pyplot as plt
 from django.http import JsonResponse
+import matplotlib
+matplotlib.use('Agg')
 from django.shortcuts import render
 def generate_comparison_graph(data, metric_name, normal_range):
     categories = ["Given", "Normal Range"]
@@ -296,8 +277,8 @@ def healthinsights(request):
 
         # Normal ranges
         heart_rate_normal = 77  # Normal range for heart rate (bpm)
-        sleep_normal = 9  # Normal range for sleep hours
-        steps_normal = 10000  # Normal range for steps
+        sleep_normal = 8  # Normal range for sleep hours
+        steps_normal = 6000  # Normal range for steps
         calories_burnt_normal = 3000  # Normal range for calories burnt
 
         # Generate graphs for each metric
